@@ -85,16 +85,15 @@ class DriveTrain:
                         image = self.image_process.equalize_histogram(image)
                         images.append(image)
         
-                        steering_angle, throttle = measurement
+                        steering_angle, throttle = (measurement[0] * self.config.input_scale, measurement[1])
                         #measurements.append(measurement)
                         measurements.append(steering_angle)
                         
                         # add the flipped image of the original
                         images.append(cv2.flip(image,1))
-                        measurement = (steering_angle*-1.0, measurement[1]) 
+                        #measurement = (steering_angle*-1.0, measurement[1])
                         #measurements.append(measurement)
-                        measurements.append(steering_angle*-1.0)
-        
+                        measurements.append(steering_angle * -1.0)
                         #print(image_path, steering_angle)
                     X_train = np.array(images)
                     y_train = np.array(measurements)
