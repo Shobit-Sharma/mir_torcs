@@ -17,10 +17,11 @@ import time
 from drive_run import DriveRun
 from screen import LocalScreenGrab
 from pid_controller import PID
+from config import Config
 
 prediction = 0
 
-class Thread_Torcs(threading.Thread):
+class ThreadTorcs(threading.Thread):
     def __init__(self, name):
         threading.Thread.__init__(self)
         self.name = name
@@ -48,10 +49,11 @@ class Thread_Torcs(threading.Thread):
         except KeyboardInterrupt:
             print('\nShutdown requested. Exiting...')
             
-class Thread_Prediction(threading.Thread):
+class ThreadPrediction(threading.Thread):
     def __init__(self,name):
         threading.Thread.__init__(self)
         self.name = name
+        self.config = Config()
         
     def run(self):
         global prediction
@@ -63,11 +65,13 @@ class Thread_Prediction(threading.Thread):
 #       load model
         drive_run = DriveRun(sys.argv[1])
         print('model loaded...')
+        
         try:
             while True:
                 arr_screenshot = (local_grab.grab()).reshape(140, 640, 3)
-                game_image = cv2.resize(arr_screenshot, (0,0), fx = 0.25, fy = 0.25)
-                prediction = (float(drive_run.run(game_image))) / 255
+                game_image = cv2.resize(arr_screenshot, (0,0), fx = self.config.image_size[0] / 640, fy = self.config.image_size[1] / 140)
+                prediction = (float(drive_run.run(game_image))) / self.config.input_scale
+                cv2.imwrite('/home/mir-lab/Desktop/test.jpg', game_image)
                 #print(prediction)
 #                if (abs(prediction) < 0.05) is True:
 #                    prediction = 0
