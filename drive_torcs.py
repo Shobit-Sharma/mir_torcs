@@ -71,7 +71,6 @@ class ThreadPrediction(threading.Thread):
                 arr_screenshot = (local_grab.grab()).reshape(140, 640, 3)
                 game_image = cv2.resize(arr_screenshot, (0,0), fx = self.config.image_size[0] / 640, fy = self.config.image_size[1] / 140)
                 prediction = (float(drive_run.run(game_image))) / self.config.input_scale
-                cv2.imwrite('/home/mir-lab/Desktop/test.jpg', game_image)
                 #print(prediction)
 #                if (abs(prediction) < 0.05) is True:
 #                    prediction = 0
@@ -84,8 +83,8 @@ def main():
         if(len(sys.argv) != 2):
             print('Use model_name')
             return
-        Thread_Torcs("TORCS").start()
-        Thread_Prediction('Prediction').start()
+        ThreadTorcs("TORCS").start()
+        ThreadPrediction('Prediction').start()
         
     except KeyboardInterrupt:
             print('\nShutdown requested. Exiting...')
